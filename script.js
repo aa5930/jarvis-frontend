@@ -1,7 +1,7 @@
-// URL du backend (à mettre à jour plus tard avec l'URL de Render)
-const BACKEND_URL const BACKEND_URL = "https://jarvis-backend-02yu.onrender.com/poser_question";= "http://localhost:8000/poser_question"; // Pour tester en local
+// URL du backend (Render)
+const BACKEND_URL = "https://jarvis-backend-02yu.onrender.com/poser_question";
 
-// Fonction pour afficher un message dans la boîte de chat
+// Fonction pour afficher un message
 function afficherMessage(message, type) {
     const messagesDiv = document.getElementById("messages");
     const messageDiv = document.createElement("div");
@@ -24,103 +24,66 @@ function afficherMessage(message, type) {
     messagesDiv.appendChild(messageDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    // Lire la réponse à voix haute si c'est l'assistant
-    if (type === "assistant") {
-        lireRéponse(message);
-    }
+    if (type === "assistant") lireRéponse(message);
 }
 
-// Fonction pour poser une question au backend
+// Poser une question
 async function poserQuestion() {
     const questionInput = document.getElementById("question");
     const question = questionInput.value.trim();
+    if (!question) return;
 
-    if (!question) {
-        return; // Ne rien faire si la question est vide
-    }
-
-    // Afficher la question de l'utilisateur
     afficherMessage(question, "user");
     questionInput.value = "";
 
     try {
-        // Envoyer la question au backend
         const response = await fetch(BACKEND_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text: question }),
         });
-
-        if (!response.ok) {
-            throw new Error("Erreur réseau : " + response.status);
-        }
-
+        if (!response.ok) throw new Error("Erreur réseau");
         const data = await response.json();
         afficherMessage(data.réponse, "assistant");
     } catch (error) {
-        console.error("Erreur :", error);
-        afficherMessage("Désolé, je n'ai pas pu traiter ta question. Vérifie que le backend est lancé.", "assistant");
+        afficherMessage("Désolé, je n'ai pas pu traiter ta question.", "assistant");
     }
 }
 
-// Fonction pour démarrer la reconnaissance vocale
+// Reconnaissance vocale
 function demarrerReconnaissanceVocale() {
     const micBtn = document.getElementById("mic-btn");
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
     if (!SpeechRecognition) {
-        afficherMessage("Désolé, la reconnaissance vocale n'est pas supportée par ton navigateur.", "assistant");
+        afficherMessage("Reconnaissance vocale non supportée.", "assistant");
         return;
     }
-
     const recognition = new SpeechRecognition();
     recognition.lang = "fr-FR";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    // Changer l'apparence du bouton micro
     micBtn.classList.add("listening");
-
     recognition.start();
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById("question").value = transcript;
-        poserQuestion(); // Pose la question automatiquement
+    recognition.onresult = (e) => {
+        document.getElementById("question").value = e.results[0][0].transcript;
+        poserQuestion();
         micBtn.classList.remove("listening");
     };
-
-    recognition.onerror = (event) => {
-        console.error("Erreur de reconnaissance vocale :", event.error);
-        afficherMessage("Désolé, je n'ai pas pu comprendre. Essaie à nouveau.", "assistant");
-        micBtn.classList.remove("listening");
-    };
-
-    recognition.onend = () => {
+    recognition.onerror = () => {
+        afficherMessage("Erreur de reconnaissance vocale.", "assistant");
         micBtn.classList.remove("listening");
     };
 }
 
-// Fonction pour lire une réponse à voix haute
+// Lire à voix haute
 function lireRéponse(texte) {
     const utterance = new SpeechSynthesisUtterance(texte);
     utterance.lang = "fr-FR";
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
 }
 
-// Permettre d'envoyer avec la touche Entrée
-document.getElementById("question").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        poserQuestion();
-    }
+// Initialisation
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("question").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") poserQuestion();
+    });
+    afficherMessage("Bonjour ! Je suis JARVIS. Comment puis-je t'aider ?", "assistant");
 });
-
-// Message de bienvenue au chargement de la page
-window.onload = () => {
-    const bienvenue = "Bonjour ! Je suis JARVIS. Comment puis-je t'aider aujourd'hui ?";
-    afficherMessage(bienvenue, "assistant");
-};
