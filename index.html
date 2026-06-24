@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS - Ton Assistant Personnel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> JARVIS</h1>
+            <p>Ton assistant personnel intelligent</p>
+        </header>
+
+        <div class="chat-container">
+            <div id="messages" class="messages">
+                <div class="message assistant">
+                    <div class="avatar"><i class="fas fa-robot"></i></div>
+                    <div class="content">Bonjour ! Je suis JARVIS. Comment puis-je t'aider aujourd'hui ?</div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="question" placeholder="Pose-moi une question..." autocomplete="off">
+                <button id="send-btn" onclick="poserQuestion()"><i class="fas fa-paper-plane"></i></button>
+                <button id="mic-btn" onclick="demarrerReconnaissanceVocale()"><i class="fas fa-microphone"></i></button>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>Essaie ces commandes :</h3>
+            <ul>
+                <li><strong>"Raconte-moi une blague"</strong> → Pour rire un peu.</li>
+                <li><strong>"Quelle est la date aujourd'hui ?"</strong> → Pour connaître la date.</li>
+                <li><strong>"Quelle heure est-il ?"</strong> → Pour connaître l'heure.</li>
+                <li><strong>"Calcule 2 + 2"</strong> → Pour faire un calcul.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
