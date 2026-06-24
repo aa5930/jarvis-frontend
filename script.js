@@ -1,5 +1,5 @@
 // URL du backend (à mettre à jour plus tard avec l'URL de Render)
-const BACKEND_URL = "http://localhost:8000/poser_question"; // Pour tester en local
+const BACKEND_URL const BACKEND_URL = "https://jarvis-backend-02yu.onrender.com/poser_question";= "http://localhost:8000/poser_question"; // Pour tester en local
 
 // Fonction pour afficher un message dans la boîte de chat
 function afficherMessage(message, type) {
